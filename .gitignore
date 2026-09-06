@@ -1,0 +1,14 @@
+node_modules
+.next
+.env
+*.tsbuildinfo
+next-env.d.ts
+coverage
+.mongodb-binaries
+
+
+# Editor / tooling
+.claude/
+
+# Project docs kept local
+kpi-engine.md
