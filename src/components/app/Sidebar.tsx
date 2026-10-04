@@ -36,7 +36,7 @@ export default function Sidebar() {
       })}
       <div className="foot">
         <div>demo workspace</div>
-        <div style={{ marginTop: 4 }}>engine · 15,45 * * * *</div>
+        <div style={{ marginTop: 4 }}>engine · {process.env.NEXT_PUBLIC_CRON_SCHEDULE_LABEL ?? "15,45 * * * *"}</div>
       </div>
     </aside>
   )

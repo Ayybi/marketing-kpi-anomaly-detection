@@ -11,10 +11,18 @@ export const CRON_SOURCE_HEALTH_SCORE = "health-score"
 
 export type CronSpec = { source: string; label: string; intervalMinutes: number }
 
-// Matches vercel.json: kpi-engine every 30 min (15,45 * * * *); health-score daily (0 3 * * *).
+// Staleness is judged against the schedule the deployment actually runs, not a hardcoded one.
+// Default 30 min matches vercel.json (`15,45 * * * *`); set KPI_ENGINE_INTERVAL_MINUTES=1440 when
+// deploying somewhere that only permits a daily cron (e.g. Vercel Hobby), so the dashboard doesn't
+// report a correctly-running cron as stale.
+function envInterval(name: string, fallback: number): number {
+  const n = Number(process.env[name])
+  return Number.isFinite(n) && n > 0 ? n : fallback
+}
+
 export const CRON_SPECS: CronSpec[] = [
-  { source: CRON_SOURCE_KPI_ENGINE, label: "KPI engine sweep", intervalMinutes: 30 },
-  { source: CRON_SOURCE_HEALTH_SCORE, label: "Health-score recompute", intervalMinutes: 24 * 60 },
+  { source: CRON_SOURCE_KPI_ENGINE, label: "KPI engine sweep", intervalMinutes: envInterval("KPI_ENGINE_INTERVAL_MINUTES", 30) },
+  { source: CRON_SOURCE_HEALTH_SCORE, label: "Health-score recompute", intervalMinutes: envInterval("HEALTH_SCORE_INTERVAL_MINUTES", 24 * 60) },
 ]
 
 export type CronFreshness = "ok" | "stale" | "never_logged"

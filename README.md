@@ -258,7 +258,11 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/kpi-
 curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/health-score
 ```
 
-On Vercel these run automatically — see [`vercel.json`](vercel.json) (`15,45 * * * *` and `0 3 * * *`).
+On Vercel these run automatically — see [`vercel.json`](vercel.json).
+
+> **Cron cadence and the Vercel Hobby plan.** The engine is designed to sweep every 30 minutes (`15,45 * * * *`), which is the cadence the architecture docs describe. Vercel's Hobby plan permits only one cron run per day, so `vercel.json` ships daily schedules (`0 2 * * *` and `0 3 * * *`) to keep the repo deployable as-is. On Pro, restore `15,45 * * * *` and leave `KPI_ENGINE_INTERVAL_MINUTES` unset.
+>
+> That env var exists because the schedule and the thing that *judges* the schedule have to agree: System Health marks a cron stale after `min(3 × interval, interval + 48h)`, so a hardcoded 30-minute interval would report a correctly-running daily cron as a red failure. The interval is configuration, not a constant.
 
 ---
 
